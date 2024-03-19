@@ -12,15 +12,17 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <orm.version>1.0.2</orm.version>
+        <base.version>1.0.2</base.version>
+        <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
+        <freemarker.version>2.3.31</freemarker.version>
+        <velocity-engine-core.version>2.3</velocity-engine-core.version>
     </properties>
-
 
     <dependencies>
         <dependency>
-            <groupId>com.lcy.common</groupId>
-            <artifactId>common-core</artifactId>
-            <version>${orm.version}</version>
+            <groupId>com.twolf.common</groupId>
+            <artifactId>common-orm</artifactId>
+            <version>${base.version}</version>
         </dependency>
         <!-- mybatis plus 代码生成器依赖 -->
         <dependency>
