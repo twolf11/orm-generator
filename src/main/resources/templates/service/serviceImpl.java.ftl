@@ -9,6 +9,8 @@ import ${package.Mapper}.${table.mapperName};
 import ${package.Service}.${table.serviceName};
 import com.twolf.common.core.model.PageRequest;
 import com.twolf.common.core.model.PageResponse;
+import com.twolf.common.core.util.AssertUtil;
+import com.twolf.common.core.util.Tools;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -31,13 +33,15 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.m
     @Override
     public void add(${entity}Request request) {
         ${entity} ${table.entityPath} = ${entity}Convert.INSTANCE.requestToEntity(request);
-        save(${table.entityPath});
+        boolean result = save(${table.entityPath});
+        AssertUtil.isTrue(!result, "新增失败");
     }
 
     @Override
     public void update(${entity}Request request) {
         ${entity} ${table.entityPath} = ${entity}Convert.INSTANCE.requestToEntity(request);
-        updateById(${table.entityPath});
+        boolean result = updateById(${table.entityPath});
+        AssertUtil.isTrue(!result, "修改失败");
     }
 
     @Override
@@ -70,18 +74,20 @@ public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.m
      **/
     private LambdaQueryWrapper<${entity}> buildQueryWrapper(${entity}QueryRequest request) {
         LambdaQueryWrapper<${entity}> queryWrapper = new LambdaQueryWrapper<>();
-        if (request != null) {
+        if (request == null) {
             return queryWrapper;
         }
         queryWrapper
         <#list table.fields as field>
-            <#if field.propertyType == "boolean">
-                    <#assign getprefix="is"/>
-                <#else>
-                    <#assign getprefix="get"/>
+            <#if !requestIgnoreFields?has_content || !requestIgnoreFields?seq_contains(field.name)>
+                <#if field.propertyType == "boolean">
+                        <#assign getprefix="is"/>
+                    <#else>
+                        <#assign getprefix="get"/>
+                    </#if>
+                <#if field.columnType.type == "String" >
+                .eq(Tools.isNotEmpty(request.${getprefix}${field.capitalName}()),${entity}::${getprefix}${field.capitalName},request.${getprefix}${field.capitalName}())
                 </#if>
-            <#if field.columnType.type == "String" >
-        .eq(${entity}::${getprefix}${field.capitalName},request.${getprefix}${field.capitalName}())
             </#if>
         </#list>
         ;

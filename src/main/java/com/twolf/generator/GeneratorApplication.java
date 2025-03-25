@@ -6,6 +6,10 @@ import com.twolf.generator.model.DatabaseInfo;
 import com.twolf.generator.model.GenerateInfo;
 import com.twolf.generator.model.TemplateInfo;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 生成器main方法
  * @Author twolf
@@ -27,6 +31,18 @@ public class GeneratorApplication {
                 .packagePath("com.twolf.generator.data")
                 .moduleName("plus")
                 .build();
+        generateInfo.setOpenValidGroup(true);
+        Map<String,String> map = new HashMap<>();
+        map.put("add","com.twolf.generator.test.Add");
+        map.put("update","com.twolf.generator.test.Update");
+        generateInfo.setGroupImportPkgs(map);
+        Map<String,String> validClass = new HashMap<>();
+        validClass.put("add","Add");
+        validClass.put("update","Update");
+        generateInfo.setGroupImportClass(validClass);
+
+        List<String> requestIgnoreFields = List.of("id","add_time");
+        generateInfo.setRequestIgnoreFields(requestIgnoreFields);
         generateRuoyi(generateInfo, "accounts");
     }
 

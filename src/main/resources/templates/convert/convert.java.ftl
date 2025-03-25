@@ -12,7 +12,7 @@ import ${pkg};
  * @Author ${author}
  * @Date ${date}
  */
- @Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ${entity}Convert {
 
     ${entity}Convert INSTANCE = Mappers.getMapper(${entity}Convert.class);

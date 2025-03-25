@@ -32,7 +32,8 @@ public class GeneratorUtil {
                 .globalConfig(builder -> {
                     builder.author(generateInfo.getAuthor()) // 设置作者
                             .outputDir(System.getProperty("user.dir") + "/src/main/java/"); // 指定输出目录
-                    builder.enableSpringdoc();
+                    builder.enableSpringdoc()
+                            .disableOpenDir();
                 })
                 .packageConfig(builder -> {
                     builder.parent(generateInfo.getPackagePath()) // 设置父包名
@@ -45,6 +46,9 @@ public class GeneratorUtil {
                 .strategyConfig(builder -> {
                     // 设置需要生成的表名
                     builder.addInclude(tableNames);
+                    if(generateInfo.getExcludeTablePrefix() != null && generateInfo.getExcludeTablePrefix().length > 0){
+                        builder.addTablePrefix(generateInfo.getExcludeTablePrefix());
+                    }
                     //实体类配置
                     entityConfig(generateInfo, builder.entityBuilder());
                     //mapper配置
@@ -80,7 +84,7 @@ public class GeneratorUtil {
                 .enableLombok()
                 .enableRemoveIsPrefix()
                 .enableFileOverride()
-                .versionColumnName("version")
+                .versionColumnName("reversion")
                 .logicDeleteColumnName("is_delete")
                 .addTableFills(new Column("create_time", FieldFill.INSERT), new Column("update_time", FieldFill.UPDATE));
     }
@@ -95,6 +99,7 @@ public class GeneratorUtil {
         List<String> convertImport = new ArrayList<>();
         convertImport.add("org.mapstruct.Mapper");
         convertImport.add("org.mapstruct.factory.Mappers");
+        convertImport.add("org.mapstruct.ReportingPolicy;");
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("superRequestClassImport", null);
         paramMap.put("superRequestClass", null);
@@ -102,6 +107,10 @@ public class GeneratorUtil {
         paramMap.put("superResponseClass", null);
         paramMap.put("convertImportPkg", convertImport);
         paramMap.put("moduleName", generateInfo.getModuleName());
+        paramMap.put("openValidGroup", generateInfo.isOpenValidGroup() );
+        paramMap.put("groupImportPkgs", generateInfo.getGroupImportPkgs());
+        paramMap.put("groupImportClass", generateInfo.getGroupImportClass());
+        paramMap.put("requestIgnoreFields", generateInfo.getRequestIgnoreFields());
         builder.customMap(paramMap);
         builder.customFile(new CustomFile.Builder()
                 .enableFileOverride()

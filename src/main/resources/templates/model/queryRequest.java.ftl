@@ -35,21 +35,24 @@ public class ${entity}QueryRequest {
 </#if>
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
-    <#if field.keyFlag>
+    <#if !requestIgnoreFields?has_content || !requestIgnoreFields?seq_contains(field.name)>
+        <#if field.keyFlag>
         <#assign keyPropertyName="${field.propertyName}"/>
-    </#if>
+        <#else>
 
-    <#if field.comment!?length gt 0>
-        <#if entityFieldUseJavaDoc>
+            <#if field.comment!?length gt 0>
+               <#if entityFieldUseJavaDoc>
     /** ${field.comment} */
+                </#if>
+            </#if>
+            <#list field.annotationAttributesList as an>
+                <#if !an.displayName?contains("@Table") && !an.displayName?contains("@Version")>
+    ${an.displayName}
+                </#if>
+            </#list>
+    private ${field.propertyType} ${field.propertyName};
         </#if>
     </#if>
-    <#list field.annotationAttributesList as an>
-        <#if !an.displayName?contains("@Table")>
-    ${an.displayName}
-        </#if>
-    </#list>
-    private ${field.propertyType} ${field.propertyName};
 </#list>
 <#------------  END 字段循环遍历  ---------->
 <#if !entityLombokModel>

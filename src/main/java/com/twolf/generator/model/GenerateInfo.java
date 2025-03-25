@@ -3,7 +3,9 @@ package com.twolf.generator.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 生成类配置
@@ -34,6 +36,20 @@ public class GenerateInfo {
      * 模块名称
      */
     private String moduleName;
+
+    /** 开启分组校验 */
+    private boolean openValidGroup;
+
+    /** 分组校验的包 */
+    private Map<String,String> groupImportPkgs;
+
+    /** 分组校验的类名 */
+    private Map<String,String> groupImportClass;
+
+    /**
+     * 排除的表前缀
+     */
+    private String[] excludeTablePrefix;
 
     /**
      * entity继承的父类
@@ -69,4 +85,9 @@ public class GenerateInfo {
      * 模板传递的参数
      */
     private Map<String, Object> paramMap;
+
+    /**
+     * request忽略的字段
+     */
+    private List<String> requestIgnoreFields;
 }

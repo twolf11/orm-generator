@@ -13,6 +13,12 @@ import ${privateKeyPackage};
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 </#if>
+<#if groupImportPkgs??>
+    <#list groupImportPkgs?keys as key>
+import ${groupImportPkgs[key]};
+    </#list>
+</#if>
+import org.springframework.validation.annotation.Validated;
 import ${package.Service}.${table.serviceName};
 import ${package.Request}.${entity}Request;
 import ${package.QueryRequest}.${entity}QueryRequest;
@@ -66,7 +72,11 @@ public class ${table.controllerName} {
     <#if springdoc>
     @Operation(summary = "添加")
     </#if>
-    public void add(@RequestBody ${entity}Request request) {
+<#if openValidGroup?? && openValidGroup>
+    public void add(@Validated(${groupImportClass.add}.class) @RequestBody ${entity}Request request) {
+<#else>
+    public void add(@Validated @RequestBody ${entity}Request request) {
+</#if>
         ${table.entityPath}Service.add(request);
     }
 
@@ -80,7 +90,11 @@ public class ${table.controllerName} {
     <#if springdoc>
     @Operation(summary = "修改")
     </#if>
-    public void update(@RequestBody ${entity}Request request) {
+<#if openValidGroup?? && openValidGroup>
+    public void update(@Validated(${groupImportClass.update}.class) @RequestBody ${entity}Request request) {
+<#else>
+    public void update(@Validated @RequestBody ${entity}Request request) {
+</#if>
         ${table.entityPath}Service.update(request);
     }
 

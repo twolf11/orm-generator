@@ -5,6 +5,11 @@ package ${package.Request};
 import ${pkg};
     </#if>
 </#list>
+<#if groupImportPkgs??>
+    <#list groupImportPkgs?keys as key>
+import ${groupImportPkgs[key]};
+    </#list>
+</#if>
 <#list validationImportPkg as pkg>
 import ${pkg};
 </#list>
@@ -35,26 +40,28 @@ public class ${entity}Request {
 </#if>
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
-    <#if field.keyFlag>
+    <#if !requestIgnoreFields?has_content || !requestIgnoreFields?seq_contains(field.name)>
+        <#if field.keyFlag>
         <#assign keyPropertyName="${field.propertyName}"/>
-    </#if>
+        </#if>
 
-    <#if field.comment!?length gt 0>
-        <#if entityFieldUseJavaDoc>
+        <#if field.comment!?length gt 0>
+            <#if entityFieldUseJavaDoc>
     /** ${field.comment} */
+            </#if>
         </#if>
-    </#if>
-    <#list field.annotationAttributesList as an>
-        <#if !an.displayName?contains("@Table")>
+        <#list field.annotationAttributesList as an>
+            <#if !an.displayName?contains("@Table") && !an.displayName?contains("@Version")>
     ${an.displayName}
-        </#if>
-    </#list>
-    <#if field.customMap??>
-        <#if field.customMap.validationAnnotation??>
+            </#if>
+        </#list>
+        <#if field.customMap??>
+            <#if field.customMap.validationAnnotation??>
     ${field.customMap.validationAnnotation}
+            </#if>
         </#if>
-    </#if>
     private ${field.propertyType} ${field.propertyName};
+    </#if>
 </#list>
 <#------------  END 字段循环遍历  ---------->
 <#if !entityLombokModel>

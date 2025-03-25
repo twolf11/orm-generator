@@ -42,7 +42,7 @@ public class ${entity}Response {
         </#if>
     </#if>
     <#list field.annotationAttributesList as an>
-        <#if !an.displayName?contains("@Table")>
+        <#if !an.displayName?contains("@Table") && !an.displayName?contains("@Version")>
     ${an.displayName}
         </#if>
     </#list>

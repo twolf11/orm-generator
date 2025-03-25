@@ -28,6 +28,8 @@ public class CustomerTemplateEngine extends FreemarkerTemplateEngine {
             return !tableField.getMetaInfo().isNullable();
         }).toList();
         Set<String> validationImportPkg = new HashSet<>();
+        boolean openValidGroup = Optional.ofNullable(objectMap.get("openValidGroup")).map(Boolean.class::cast).orElse(false);
+        Map<String, String> validMap = Optional.ofNullable(objectMap.get("groupImportClass")).map(Map.class::cast).orElse(new HashMap<String, String>());
         tableFields.forEach(tableField -> {
             String annotationType;
             if (tableField.getColumnType() == STRING) {
@@ -39,7 +41,15 @@ public class CustomerTemplateEngine extends FreemarkerTemplateEngine {
                 validationImportPkg.add("jakarta.validation.constraints.NotNull");
                 annotationType = "@NotNull";
             }
-            String annotation = "(message = \"" + tableField.getComment() + "不能为空" + "\")";
+            String validStr = "";
+            if(openValidGroup){
+                if(tableField.isKeyFlag()){
+                    validStr = "groups = "+validMap.get("update")+".class, ";
+                }else {
+                    validStr = "groups = "+validMap.get("add")+".class, ";
+                }
+            }
+            String annotation = "("+validStr+"message = \"" + tableField.getComment() + "不能为空" + "\")";
             Map<String, Object> customMap = new HashMap<>();
             customMap.put("validationAnnotation", annotationType + annotation);
             tableField.setCustomMap(customMap);
