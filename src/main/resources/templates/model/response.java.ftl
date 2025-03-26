@@ -14,10 +14,8 @@ import ${superResponseClassImport};
  * @Author ${author}
  * @Date ${date}
  */
-<#list entityClassAnnotations as an>
-    <#if !an.displayName?contains("@Table")>
+<#list requestEntityClassAnnotations as an>
 ${an.displayName}
-    </#if>
 </#list>
 <#if superResponseClass??>
 public class ${entity}Response extends ${superResponseClass} {
@@ -32,21 +30,25 @@ public class ${entity}Response {
 </#if>
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
-    <#if field.keyFlag>
-        <#assign keyPropertyName="${field.propertyName}"/>
-    </#if>
+    <#if field.name != logicDeleteFieldName>
+        <#if field.keyFlag>
+            <#assign keyPropertyName="${field.propertyName}"/>
+        </#if>
 
-    <#if field.comment!?length gt 0>
-        <#if entityFieldUseJavaDoc>
+        <#if field.comment!?length gt 0>
+            <#if entityFieldUseJavaDoc>
     /** ${field.comment} */
+            </#if>
         </#if>
-    </#if>
-    <#list field.annotationAttributesList as an>
-        <#if !an.displayName?contains("@Table") && !an.displayName?contains("@Version")>
+        <#if field.customMap??>
+            <#if field.customMap.requestAnnotationAttributes??>
+                <#list field.customMap.requestAnnotationAttributes as an>
     ${an.displayName}
+                </#list>
+            </#if>
         </#if>
-    </#list>
     private ${field.propertyType} ${field.propertyName};
+    </#if>
 </#list>
 <#------------  END 字段循环遍历  ---------->
 <#if !entityLombokModel>

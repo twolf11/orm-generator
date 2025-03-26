@@ -18,9 +18,9 @@ import java.util.Map;
 public class GeneratorApplication {
 
     public static void main(String[] args) {
-        DatabaseInfo databaseInfo = DatabaseInfo.builder().ip("127.0.0.1")
+        DatabaseInfo databaseInfo = DatabaseInfo.builder().ip("192.168.1.20")
                 .port("3306")
-                .database("test")
+                .database("wd-game-auth")
                 .username("root")
                 .password("root")
                 .build();

@@ -10,9 +10,7 @@ import ${pkg};
  * @Date ${date}
  */
 <#list entityClassAnnotations as an>
-    <#if !an.displayName?contains("@Schema")>
 ${an.displayName}
-    </#if>
 </#list>
 <#if superEntityClass??>
 public class ${entity} extends ${superEntityClass}<#if activeRecord><${entity}></#if> {

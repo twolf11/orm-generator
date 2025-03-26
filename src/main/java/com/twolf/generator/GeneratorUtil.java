@@ -2,11 +2,14 @@ package com.twolf.generator;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.builder.*;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.twolf.generator.engine.CustomerTemplateEngine;
 import com.twolf.generator.model.GenerateInfo;
+import org.apache.ibatis.type.JdbcType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +31,15 @@ public class GeneratorUtil {
      * @date 2022/1/24 18:08
      **/
     public static void generate(GenerateInfo generateInfo, String... tableNames) {
-        FastAutoGenerator.create(generateInfo.getDatabaseInfo().getJdbcUrl(), generateInfo.getDatabaseInfo().getUsername(), generateInfo.getDatabaseInfo().getPassword())
+        DataSourceConfig.Builder dataSourceConfigBuilder = new DataSourceConfig.Builder(generateInfo.getDatabaseInfo().getJdbcUrl(), generateInfo.getDatabaseInfo().getUsername(), generateInfo.getDatabaseInfo().getPassword())
+                .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                    // 兼容旧版本转换成Integer
+                    if (JdbcType.TINYINT == metaInfo.getJdbcType()) {
+                        return DbColumnType.INTEGER;
+                    }
+                    return typeRegistry.getColumnType(metaInfo);
+                });
+        FastAutoGenerator.create(dataSourceConfigBuilder)
                 .globalConfig(builder -> {
                     builder.author(generateInfo.getAuthor()) // 设置作者
                             .outputDir(System.getProperty("user.dir") + "/src/main/java/"); // 指定输出目录
@@ -46,7 +57,7 @@ public class GeneratorUtil {
                 .strategyConfig(builder -> {
                     // 设置需要生成的表名
                     builder.addInclude(tableNames);
-                    if(generateInfo.getExcludeTablePrefix() != null && generateInfo.getExcludeTablePrefix().length > 0){
+                    if (generateInfo.getExcludeTablePrefix() != null && generateInfo.getExcludeTablePrefix().length > 0) {
                         builder.addTablePrefix(generateInfo.getExcludeTablePrefix());
                     }
                     //实体类配置
@@ -107,7 +118,7 @@ public class GeneratorUtil {
         paramMap.put("superResponseClass", null);
         paramMap.put("convertImportPkg", convertImport);
         paramMap.put("moduleName", generateInfo.getModuleName());
-        paramMap.put("openValidGroup", generateInfo.isOpenValidGroup() );
+        paramMap.put("openValidGroup", generateInfo.isOpenValidGroup());
         paramMap.put("groupImportPkgs", generateInfo.getGroupImportPkgs());
         paramMap.put("groupImportClass", generateInfo.getGroupImportClass());
         paramMap.put("requestIgnoreFields", generateInfo.getRequestIgnoreFields());

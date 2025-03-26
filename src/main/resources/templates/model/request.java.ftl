@@ -22,10 +22,8 @@ import ${superRequestClassImport};
  * @Author ${author}
  * @Date ${date}
  */
-<#list entityClassAnnotations as an>
-    <#if !an.displayName?contains("@Table")>
+<#list requestEntityClassAnnotations as an>
 ${an.displayName}
-    </#if>
 </#list>
 <#if superRequestClass??>
 public class ${entity}Request extends ${superRequestClass} {
@@ -40,7 +38,7 @@ public class ${entity}Request {
 </#if>
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
-    <#if !requestIgnoreFields?has_content || !requestIgnoreFields?seq_contains(field.name)>
+    <#if (!requestIgnoreFields?has_content || !requestIgnoreFields?seq_contains(field.name)) && field.name != logicDeleteFieldName>
         <#if field.keyFlag>
         <#assign keyPropertyName="${field.propertyName}"/>
         </#if>
@@ -50,12 +48,13 @@ public class ${entity}Request {
     /** ${field.comment} */
             </#if>
         </#if>
-        <#list field.annotationAttributesList as an>
-            <#if !an.displayName?contains("@Table") && !an.displayName?contains("@Version")>
-    ${an.displayName}
-            </#if>
-        </#list>
+
         <#if field.customMap??>
+            <#if field.customMap.requestAnnotationAttributes??>
+                <#list field.customMap.requestAnnotationAttributes as an>
+    ${an.displayName}
+                </#list>
+            </#if>
             <#if field.customMap.validationAnnotation??>
     ${field.customMap.validationAnnotation}
             </#if>

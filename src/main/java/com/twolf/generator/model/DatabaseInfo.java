@@ -43,6 +43,6 @@ public class DatabaseInfo {
      * @date 2025/3/18 14:07
      **/
     public String getJdbcUrl() {
-        return "jdbc:mysql://" + ip + ":" + port + "/" + database + "?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai";
+        return "jdbc:mysql://" + ip + ":" + port + "/" + database + "?useUnicode=true&allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai";
     }
 }

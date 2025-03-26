@@ -90,7 +90,7 @@ public class ${table.controllerName} extends BaseController {
      * @date ${date}
      **/
     @PreAuthorize("@ss.hasPermi('${moduleName}:${table.entityPath}:edit')")
-    @Log(title = "添加${table.comment}", businessType = BusinessType.UPDATE)
+    @Log(title = "修改${table.comment}", businessType = BusinessType.UPDATE)
     @PutMapping("/update")
     <#if springdoc>
     @Operation(summary = "修改")
@@ -111,7 +111,7 @@ public class ${table.controllerName} extends BaseController {
      * @date ${date}
      **/
     @PreAuthorize("@ss.hasPermi('${moduleName}:${table.entityPath}:delete')")
-    @Log(title = "添加${table.comment}", businessType = BusinessType.DELETE)
+    @Log(title = "删除${table.comment}", businessType = BusinessType.DELETE)
     @DeleteMapping("/delete/{privateKey}")
     <#if springdoc>
     @Operation(summary = "删除")
